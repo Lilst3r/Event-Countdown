@@ -11,6 +11,8 @@ export default class App extends Component {
   constructor(props) {
     super(props)
 
+    this.timer = 0;
+
     this.state = {
       active: false,
       startDate: moment(),
@@ -21,6 +23,8 @@ export default class App extends Component {
         seconds: 0
       }
     }
+
+    this.handleGenerate = this.handleGenerate.bind(this)
   }
 
   handleChange = function(date) {
@@ -37,7 +41,7 @@ export default class App extends Component {
     var countDownDate = this.state.startDate.toDate().getTime();
     
     // Update the countdown every 1 second
-    var x = setInterval(function() {
+    this.timer = setInterval(function() {
       
       // Get today's date and time 
       var now = new Date().getTime();
@@ -53,30 +57,27 @@ export default class App extends Component {
 
       // Output the result in an element with id="demo"
       const time = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
-
-      this.setState ({
-        timeRemaining: {
-          days,
-          hours,
-          minutes,
-          seconds
-        }
-      })
-
-      console.log(this.state.timeRemaining);
+      const timeRemaining = {
+        days,
+        hours,
+        minutes,
+        seconds
+      }
+      
+      this.setState({ timeRemaining });
 
       // if the countdown is over, write some text
       if (distance < 0) {
-        clearInterval(x);
+        clearInterval(this.timer);
         //document.getElementById("demo").innerHTML = "EXPIRED";
       }
-    }, 1000);
+    }.bind(this), 1000);
   }.bind(this)
 
   renderItems = function() {
     if(this.state.active) {
       return [
-        <Clock/>,
+        <Clock timeRemaining={this.state.timeRemaining}/>,
         ChangeDate('Change Date', () => this.setState({ active: false })),
         LargeText('04/03'),
         <label className="grid__remaining">Remaining until your 15th birthday</label>
